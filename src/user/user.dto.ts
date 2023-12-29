@@ -4,6 +4,7 @@ import {
   IsNumber,
   IsNotEmpty,
 } from '@nestjs/class-validator';
+import { IsBoolean } from 'class-validator';
 
 export class UserDto {
   @IsOptional()
@@ -15,6 +16,7 @@ export class UserDto {
   name: string;
 
   @IsString()
+  @IsOptional()
   password: string;
 
   @IsString()
@@ -28,4 +30,8 @@ export class UserDto {
   @IsString()
   @IsOptional()
   title?: string;
+
+  @IsBoolean()
+  @IsOptional()
+  is_active?: boolean;
 }

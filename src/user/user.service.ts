@@ -7,8 +7,27 @@ import { Prisma } from '@prisma/client';
 export class UserService {
   constructor(private readonly databaseService: DatabaseService) {}
 
-  async findAll(): Promise<User[]> {
-    return this.databaseService.user.findMany();
+  async findAll(filterParams?: {
+    name?: string;
+    is_active?: boolean;
+    title?: string;
+  }): Promise<User[]> {
+    const query = {};
+
+    if (filterParams && filterParams.name) {
+      query['name'] = filterParams.name;
+    }
+
+    if (filterParams && filterParams.is_active) {
+      query['is_active'] = filterParams.is_active;
+    }
+
+    if (filterParams && filterParams.title) {
+      query['title'] = filterParams.title;
+    }
+    return this.databaseService.user.findMany({
+      where: query,
+    });
   }
 
   async create(data: Prisma.userCreateInput): Promise<User> {
@@ -17,9 +36,15 @@ export class UserService {
 
   async findById(id: number): Promise<User> {
     const userId: number = Number(id);
-    return this.databaseService.user.findUnique({
+    const user: User = await this.databaseService.user.findUnique({
       where: { id: userId },
     });
+
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    return user;
   }
 
   async update(id: number, data: Prisma.userUpdateInput): Promise<User> {

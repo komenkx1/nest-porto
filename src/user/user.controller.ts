@@ -7,6 +7,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
   UploadedFile,
   UseInterceptors,
   ValidationPipe,
@@ -17,6 +18,7 @@ import { diskStorage } from 'multer';
 import { UserDto } from './user.dto';
 import * as fs from 'fs/promises';
 import * as path from 'path';
+import { User } from './user.entity';
 
 const imageFileFilter = (req, file, cb) => {
   if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/)) {
@@ -29,9 +31,17 @@ const imageFileFilter = (req, file, cb) => {
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
+  //crud
   @Get()
-  async findAll() {
-    return this.userService.findAll();
+  async findAll(
+    @Query() query: { name?: string; is_active?: boolean; title?: string },
+  ) {
+    const user: User[] = await this.userService.findAll(query);
+    return {
+      message: 'User fecched successfully',
+      data: user,
+      code: 200,
+    };
   }
 
   @Post()
@@ -61,8 +71,8 @@ export class UserController {
       if (file) {
         data.profileImage = file.path.replace(/\\/g, '/');
       }
-      this.userService.create({ ...data });
-      return { message: 'User created successfully' };
+      const newUser: User = await this.userService.create({ ...data });
+      return { message: 'User created successfully', data: newUser, code: 200 };
     } catch (error) {
       throw new BadRequestException('Validation failed', error.message);
     }
@@ -102,9 +112,13 @@ export class UserController {
         user.profileImage ? await fs.unlink(user.profileImage) : null;
         updatedData.profileImage = file.path.replace(/\\/g, '/');
       }
-      await this.userService.update(id, updatedData);
+      const userEdited: User = await this.userService.update(id, updatedData);
 
-      return { message: 'User updated successfully' };
+      return {
+        message: 'User updated successfully',
+        data: userEdited,
+        code: 200,
+      };
     } catch (error) {
       throw new BadRequestException('Update failed', error.message);
     }
@@ -119,9 +133,33 @@ export class UserController {
       }
       user.profileImage ? await fs.unlink(user.profileImage) : null;
       await this.userService.delete(id);
-      return { message: 'User deleted successfully' };
+      return { message: 'User deleted successfully', data: user, code: 200 };
     } catch (error) {
       throw new BadRequestException('Delete failed', error.message);
     }
+  }
+
+  //transaction
+  @Post('set-active-user/:id')
+  async setActiveUser(
+    @Param('id') id: number,
+    @Body(new ValidationPipe({ transform: true })) updatedData: UserDto,
+  ) {
+    console.log(updatedData);
+    const user: User = await this.userService.findById(id);
+    if (!user) {
+      throw new BadRequestException('User not found');
+    }
+    const activeUser: User[] = await this.userService.findAll({
+      is_active: true,
+    });
+
+    if (activeUser.length > 0) {
+      await this.userService.update(activeUser[0].id, { is_active: false });
+    }
+
+    await this.userService.update(user.id, updatedData);
+
+    return { message: 'User updated successfully' };
   }
 }

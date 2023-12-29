@@ -4,6 +4,8 @@ export const USER_ROUTER = [
   {
     path: 'user',
     module: UserModule,
-    children: [],
+    children: [
+      { path: 'set-active-user/:id', method: 'post', action: 'setActiveUser' },
+    ],
   },
 ];

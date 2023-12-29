@@ -72,6 +72,8 @@ export class UserController {
         data.profileImage = file.path.replace(/\\/g, '/');
       }
       const newUser: User = await this.userService.create({ ...data });
+      //delete user password
+      delete newUser.password;
       return { message: 'User created successfully', data: newUser, code: 200 };
     } catch (error) {
       throw new BadRequestException('Validation failed', error.message);
@@ -113,6 +115,7 @@ export class UserController {
         updatedData.profileImage = file.path.replace(/\\/g, '/');
       }
       const userEdited: User = await this.userService.update(id, updatedData);
+      delete userEdited.password;
 
       return {
         message: 'User updated successfully',
@@ -133,6 +136,7 @@ export class UserController {
       }
       user.profileImage ? await fs.unlink(user.profileImage) : null;
       await this.userService.delete(id);
+      delete user.password;
       return { message: 'User deleted successfully', data: user, code: 200 };
     } catch (error) {
       throw new BadRequestException('Delete failed', error.message);

@@ -13,7 +13,7 @@ export class User {
   createdAt: Date;
   updatedAt: Date;
   deletedAt: Date;
-  jargon?: Jargon[];
+  jargon?: Jargon;
   portofolio?: Portofolio[];
   certificate?: Certificate[];
 }

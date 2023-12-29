@@ -28,6 +28,13 @@ export class UserService {
     }
     return this.databaseService.user.findMany({
       where: query,
+      include: {
+        jargon: {
+          where: {
+            is_active: true,
+          },
+        },
+      },
     });
   }
 

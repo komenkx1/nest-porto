@@ -15,26 +15,27 @@ model user {
   name         String
   is_active    Boolean       @default(false)
   password     String
-  description  String?
+  description  String?       @db.Text
   title        String?
   profileImage String?
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
   deletedAt    DateTime?
-  jargon       jargon[]
+  jargon       jargon? // Use singular name for a one-to-one relationship
   portofolio   portofolio[]
   certificate  certificate[]
 }
 
 model jargon {
   id             Int       @id @default(autoincrement())
-  user_id        Int
+  user_id        Int       @unique // Make sure it's unique for one-to-one
   primary_text   String
   secondary_text String
+  is_active      Boolean   @default(false)
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
   deletedAt      DateTime?
-  user           user?      @relation(fields: [user_id], references: [id])
+  user           user?     @relation(fields: [user_id], references: [id])
 }
 
 model category {
@@ -56,17 +57,17 @@ model tag {
 }
 
 model portofolio {
-  id             Int              @id @default(autoincrement())
-  user_id        Int
-  category_id    Int
-  title          String
-  description    String
-  thumbnail      String
-  createdAt      DateTime         @default(now())
-  updatedAt      DateTime         @updatedAt
-  deletedAt      DateTime?
-  user           user             @relation(fields: [user_id], references: [id])
-  category       category         @relation(fields: [category_id], references: [id])
+  id            Int              @id @default(autoincrement())
+  user_id       Int
+  category_id   Int
+  title         String
+  description   String?          @db.Text
+  thumbnail     String?
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+  deletedAt     DateTime?
+  user          user             @relation(fields: [user_id], references: [id])
+  category      category         @relation(fields: [category_id], references: [id])
   portofolioTag portofolio_tag[]
 }
 

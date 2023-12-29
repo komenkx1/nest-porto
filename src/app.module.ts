@@ -1,4 +1,4 @@
-import { MiddlewareConsumer, Module, RequestMethod } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { AppRoutingModule } from './app.routing.module';
 import { DatabaseModule } from './database/database.module';
@@ -15,7 +15,7 @@ import { PortofolioTagModule } from './portofolio_tag/portofolio_tag.module';
 @Module({
   imports: [
     ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '..'),
+      rootPath: join(__dirname, '..'), // Sesuaikan dengan struktur direktori Anda
     }),
     ConfigModule.forRoot({ isGlobal: true }),
     DatabaseModule,
@@ -31,8 +31,4 @@ import { PortofolioTagModule } from './portofolio_tag/portofolio_tag.module';
   controllers: [],
   providers: [],
 })
-export class AppModule {
-  configure(consumer: MiddlewareConsumer) {
-    consumer.apply().forRoutes({ path: '*', method: RequestMethod.ALL });
-  }
-}
+export class AppModule {}

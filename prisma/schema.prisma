@@ -78,8 +78,8 @@ model portofolio_tag {
   createdAt     DateTime   @default(now())
   updatedAt     DateTime   @updatedAt
   deletedAt     DateTime?
-  portofolio    portofolio @relation(fields: [portofolio_id], references: [id])
-  tag           tag        @relation(fields: [tag_id], references: [id])
+  portofolio    portofolio? @relation(fields: [portofolio_id], references: [id])
+  tag           tag?        @relation(fields: [tag_id], references: [id])
 }
 
 model certificate {

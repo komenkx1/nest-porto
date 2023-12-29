@@ -4,6 +4,6 @@ import { PortofolioTagController } from './portofolio_tag.controller';
 
 @Module({
   providers: [PortofolioTagService],
-  controllers: [PortofolioTagController]
+  controllers: [PortofolioTagController],
 })
 export class PortofolioTagModule {}

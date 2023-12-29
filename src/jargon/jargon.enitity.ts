@@ -1,3 +1,5 @@
+/* eslint-disable prettier/prettier */
+
 import { User } from 'src/user/user.entity';
 
 export class Jargon {
@@ -8,5 +10,5 @@ export class Jargon {
   createdAt: Date;
   updatedAt: Date;
   deletedAt: Date;
-  user: User;
+  user?: User;
 }

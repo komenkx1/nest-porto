@@ -14,12 +14,13 @@ export class UserService {
   }): Promise<User[]> {
     const query = {};
 
+    const isActive = Boolean(filterParams?.is_active);
     if (filterParams && filterParams.name) {
       query['name'] = filterParams.name;
     }
 
-    if (filterParams && filterParams.is_active) {
-      query['is_active'] = filterParams.is_active;
+    if (filterParams && isActive) {
+      query['is_active'] = isActive;
     }
 
     if (filterParams && filterParams.title) {

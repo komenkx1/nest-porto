@@ -7,7 +7,6 @@ export class Jargon {
   user_id: number;
   primary_text: string;
   secondary_text: string;
-  is_active: boolean;
   createdAt: Date;
   updatedAt: Date;
   deletedAt: Date;

@@ -31,7 +31,6 @@ model jargon {
   user_id        Int       @unique // Make sure it's unique for one-to-one
   primary_text   String
   secondary_text String
-  is_active      Boolean   @default(false)
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
   deletedAt      DateTime?

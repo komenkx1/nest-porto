@@ -38,7 +38,7 @@ export class PortofolioController {
   @Get()
   async findAll(
     @Query('page') page: number = 1,
-    @Query('pageSize') pageSize: number = 10,
+    @Query('pageSize') pageSize: number = 3,
     @Query() query: { title?: string; category?: string; tag?: string },
   ): Promise<{ data: Portofolio[]; currentPage: number; totalPages: number }> {
     return this.portofolioService.findAll(page, pageSize, query);

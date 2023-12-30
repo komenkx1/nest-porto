@@ -9,7 +9,7 @@ export class PortofolioService {
 
   async findAll(
     @Query('page') page: number = 1,
-    @Query('pageSize') pageSize: number = 10,
+    @Query('pageSize') pageSize: number = 3,
     filterParams?: {
       title?: string;
       category?: string;

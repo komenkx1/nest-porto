@@ -6,6 +6,7 @@ import { JARGON_ROUTER } from './jargon/jargon.routes';
 import { CATEGORY_ROUTER } from './category/category.routes';
 import { TAG_ROUTER } from './tag/tag.routes';
 import { PORTOFOLIO_TAG_ROUTER } from './portofolio_tag/portofolio_tag.routes';
+import { PORTOFOLIO_ROUTER } from './portofolio/portofolio.routes';
 const ROUTES = [
   ...AUTH_ROUTER,
   ...USER_ROUTER,
@@ -13,6 +14,7 @@ const ROUTES = [
   ...CATEGORY_ROUTER,
   ...TAG_ROUTER,
   ...PORTOFOLIO_TAG_ROUTER,
+  ...PORTOFOLIO_ROUTER,
 ];
 
 @Module({

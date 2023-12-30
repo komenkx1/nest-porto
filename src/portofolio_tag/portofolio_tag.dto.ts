@@ -1,7 +1,7 @@
-import { IsNotEmpty, IsNumber } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsOptional } from 'class-validator';
 
 export class PortofolioTagDto {
-  @IsNotEmpty()
+  @IsOptional()
   @IsNumber()
   portofolio_id: number;
 

@@ -111,7 +111,13 @@ export class UserController {
       }
 
       if (file) {
-        user.profileImage ? await fs.unlink(user.profileImage) : null;
+        try {
+          await fs.access(user.profileImage);
+          await fs.unlink(user.profileImage);
+        } catch (error) {
+          console.error(`Error deleting file: ${user.profileImage}`);
+          console.error(error.message);
+        }
         updatedData.profileImage = file.path.replace(/\\/g, '/');
       }
       const userEdited: User = await this.userService.update(id, updatedData);

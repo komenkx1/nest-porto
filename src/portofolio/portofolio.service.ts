@@ -28,9 +28,7 @@ export class PortofolioService {
     }
 
     if (filterParams && filterParams.category) {
-      query.category = {
-        name: filterParams.category,
-      };
+      query.category_id = Number(filterParams.category);
     }
 
     if (filterParams && filterParams.tag) {

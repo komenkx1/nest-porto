@@ -7,6 +7,7 @@ import { CATEGORY_ROUTER } from './category/category.routes';
 import { TAG_ROUTER } from './tag/tag.routes';
 import { PORTOFOLIO_TAG_ROUTER } from './portofolio_tag/portofolio_tag.routes';
 import { PORTOFOLIO_ROUTER } from './portofolio/portofolio.routes';
+import { CERTIFICATE_ROUTER } from './certificate/certificate.routes';
 const ROUTES = [
   ...AUTH_ROUTER,
   ...USER_ROUTER,
@@ -15,6 +16,7 @@ const ROUTES = [
   ...TAG_ROUTER,
   ...PORTOFOLIO_TAG_ROUTER,
   ...PORTOFOLIO_ROUTER,
+  ...CERTIFICATE_ROUTER,
 ];
 
 @Module({

@@ -91,5 +91,5 @@ model certificate {
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
   deletedAt   DateTime?
-  user        user      @relation(fields: [user_id], references: [id])
+  user        user?      @relation(fields: [user_id], references: [id])
 }

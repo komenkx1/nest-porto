@@ -9,5 +9,5 @@ export class Certificate {
   createdAt: Date;
   updatedAt: Date;
   deletedAt: Date;
-  user: User;
+  user?: User;
 }

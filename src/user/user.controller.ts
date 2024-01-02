@@ -160,10 +160,7 @@ export class UserController {
 
   //transaction
   @Post('set-active-user/:id')
-  async setActiveUser(
-    @Param('id') id: number,
-    @Body(new ValidationPipe({ transform: true })) updatedData: UserDto,
-  ) {
+  async setActiveUser(@Param('id') id: number, @Body() updatedData: UserDto) {
     const user: User = await this.userService.findById(id);
     if (!user) {
       throw new BadRequestException('User not found');

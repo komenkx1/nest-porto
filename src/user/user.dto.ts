@@ -19,7 +19,6 @@ export class UserDto {
   @IsOptional()
   password: string;
 
-  @IsString()
   @IsOptional()
   profileImage?: string;
 

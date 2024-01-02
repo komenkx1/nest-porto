@@ -140,7 +140,16 @@ export class UserController {
       if (!user) {
         throw new BadRequestException('User not found');
       }
-      user.profileImage ? await fs.unlink(user.profileImage) : null;
+      if (user.profileImage) {
+        try {
+          await fs.access(user.profileImage);
+          await fs.unlink(user.profileImage);
+        } catch (error) {
+          console.error(`Error deleting file: ${user.profileImage}`);
+          console.error(error.message);
+        }
+      }
+
       await this.userService.delete(id);
       delete user.password;
       return { message: 'User deleted successfully', data: user, code: 200 };
@@ -155,7 +164,6 @@ export class UserController {
     @Param('id') id: number,
     @Body(new ValidationPipe({ transform: true })) updatedData: UserDto,
   ) {
-    console.log(updatedData);
     const user: User = await this.userService.findById(id);
     if (!user) {
       throw new BadRequestException('User not found');

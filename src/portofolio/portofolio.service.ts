@@ -47,6 +47,7 @@ export class PortofolioService {
         skip,
         take: perPage,
         include: {
+          user: true,
           category: true,
           portofolioTag: {
             include: {

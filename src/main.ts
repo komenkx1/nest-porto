@@ -9,7 +9,7 @@ async function enableCors() {
   const app = await NestFactory.create(AppModule);
   const configService = app.get(ConfigService);
   const clientPort = parseInt(configService.get('CLIENT_PORT'));
-  const port = 3000;
+  const port = process.env.PORT || parseInt(configService.get('PORT'));
 
   const corsOptions = {
     origin: [

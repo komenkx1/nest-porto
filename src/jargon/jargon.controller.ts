@@ -11,6 +11,7 @@ import {
 } from '@nestjs/common';
 import { JargonService } from './jargon.service';
 import { Jargon } from './jargon.enitity';
+import { ApiResponse } from '../api-response';
 import { JargonDto } from './jargon.dto';
 
 @Controller()
@@ -20,40 +21,27 @@ export class JargonController {
   @Get()
   async findAll() {
     const dataJargon: Jargon[] = await this.jargonService.findAll();
-    return {
-      message: 'User fecched successfully',
-      data: dataJargon,
-      code: 200,
-    };
+    return ApiResponse.success(dataJargon);
   }
 
   @Post()
-  async create(@Body() data: JargonDto) {
+  async create(@Body() data: JargonDto): Promise<ApiResponse<Jargon>> {
     const result: Jargon = await this.jargonService.create(data);
-    return {
-      message: 'User fecched successfully',
-      data: result,
-      code: 200,
-    };
+    return ApiResponse.success(result);
   }
 
   @Put(':id')
-  async update(@Param('id') id: number, @Body() data: JargonDto) {
+  async update(
+    @Param('id') id: number,
+    @Body() data: JargonDto,
+  ): Promise<ApiResponse<Jargon>> {
     const result: Jargon = await this.jargonService.update(id, data);
-    return {
-      message: 'User fecched successfully',
-      data: result,
-      code: 200,
-    };
+    return ApiResponse.success(result);
   }
 
   @Delete(':id')
-  async delete(@Param('id') id: number) {
+  async delete(@Param('id') id: number): Promise<ApiResponse<Jargon>> {
     const result: Jargon = await this.jargonService.remove(id);
-    return {
-      message: 'User fecched successfully',
-      data: result,
-      code: 200,
-    };
+    return ApiResponse.success(result);
   }
 }

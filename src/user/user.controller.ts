@@ -19,6 +19,7 @@ import { UserDto } from './user.dto';
 import * as fs from 'fs/promises';
 import * as path from 'path';
 import { User } from './user.entity';
+import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 
 const imageFileFilter = (req, file, cb) => {
   if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/)) {
@@ -29,7 +30,10 @@ const imageFileFilter = (req, file, cb) => {
 };
 @Controller()
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    private readonly userService: UserService,
+    private cloudinary: CloudinaryService,
+  ) {}
 
   //crud
   @Get()
@@ -45,32 +49,25 @@ export class UserController {
   }
 
   @Post()
-  @UseInterceptors(
-    FileInterceptor('profileImage', {
-      storage: diskStorage({
-        destination: 'public/img',
-        filename: (req, file, cb) => {
-          const ext = path.extname(file.originalname);
-          const fileName = `${Math.round(
-            Math.random() * 1e9,
-          )}_${Date.now()}${ext}`;
-          cb(null, fileName);
-        },
-      }),
-      fileFilter: imageFileFilter,
-      limits: {
-        fileSize: 1024 * 1024 * 2,
-      },
-    }),
-  )
+  @UseInterceptors(FileInterceptor('profileImage'))
   async create(
-    @Body(new ValidationPipe({ transform: true })) data: UserDto,
+    @Body() data: UserDto,
     @UploadedFile() file: Express.Multer.File,
   ) {
     try {
-      if (file) {
-        data.profileImage = file.path.replace(/\\/g, '/');
-      }
+      await this.cloudinary
+        .uploadImage(file, 'profile_image')
+        .then((result) => {
+          const imageUrl = result.secure_url;
+          if (file) {
+            data.profileImage = imageUrl;
+          }
+        })
+        .catch((error) => {
+          console.error('Cloudinary upload error:', error);
+          throw new BadRequestException('Invalid file type.');
+        });
+
       const newUser: User = await this.userService.create({ ...data });
       //delete user password
       delete newUser.password;
@@ -81,24 +78,7 @@ export class UserController {
   }
 
   @Put(':id')
-  @UseInterceptors(
-    FileInterceptor('profileImage', {
-      storage: diskStorage({
-        destination: 'public/img',
-        filename: (req, file, cb) => {
-          const ext = path.extname(file.originalname);
-          const fileName = `${Math.round(
-            Math.random() * 1e9,
-          )}_${Date.now()}${ext}`;
-          cb(null, fileName);
-        },
-      }),
-      fileFilter: imageFileFilter,
-      limits: {
-        fileSize: 1024 * 1024 * 2,
-      },
-    }),
-  )
+  @UseInterceptors(FileInterceptor('profileImage'))
   async update(
     @Param('id') id: number,
     @Body(new ValidationPipe({ transform: true })) updatedData: UserDto,
@@ -112,13 +92,24 @@ export class UserController {
 
       if (file) {
         try {
-          await fs.access(user.profileImage);
-          await fs.unlink(user.profileImage);
+          await this.cloudinary.deleteImage(user.profileImage, 'profile_image');
         } catch (error) {
           console.error(`Error deleting file: ${user.profileImage}`);
           console.error(error.message);
         }
-        updatedData.profileImage = file.path.replace(/\\/g, '/');
+
+        await this.cloudinary
+          .uploadImage(file, 'profile_image')
+          .then((result) => {
+            const imageUrl = result.secure_url;
+            if (file) {
+              updatedData.profileImage = imageUrl;
+            }
+          })
+          .catch((error) => {
+            console.error('Cloudinary upload error:', error);
+            throw new BadRequestException('Invalid file type.');
+          });
       }
       const userEdited: User = await this.userService.update(id, updatedData);
       delete userEdited.password;

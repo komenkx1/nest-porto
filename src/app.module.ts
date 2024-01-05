@@ -11,6 +11,8 @@ import { CategoryModule } from './category/category.module';
 // import { join } from 'path';
 import { TagModule } from './tag/tag.module';
 import { PortofolioTagModule } from './portofolio_tag/portofolio_tag.module';
+import { CloudinaryModule } from './cloudinary/cloudinary.module';
+import { ClodinaryService } from './clodinary/clodinary.service';
 
 @Module({
   imports: [
@@ -27,8 +29,9 @@ import { PortofolioTagModule } from './portofolio_tag/portofolio_tag.module';
     CategoryModule,
     TagModule,
     PortofolioTagModule,
+    CloudinaryModule,
   ],
   controllers: [],
-  providers: [],
+  providers: [ClodinaryService],
 })
 export class AppModule {}

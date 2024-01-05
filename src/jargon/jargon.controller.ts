@@ -26,7 +26,6 @@ export class JargonController {
 
   @Post()
   async create(@Body() data: JargonDto): Promise<ApiResponse<Jargon>> {
-    console.log('data', data);
     const result: Jargon = await this.jargonService.create(data);
     return ApiResponse.success(result);
   }

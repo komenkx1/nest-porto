@@ -14,21 +14,17 @@ import {
 import { CertificateService } from './certificate.service';
 import { ApiResponse } from 'src/api-response';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
 import * as fs from 'fs/promises';
-import * as path from 'path';
 import { CertificateDto } from './certificate.dto';
 import { Certificate } from './certificate.entity';
-const imageFileFilter = (req, file, cb) => {
-  if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/)) {
-    const error = new BadRequestException('Only image files are allowed!');
-    return cb(error, false);
-  }
-  cb(null, true);
-};
+import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
+
 @Controller()
 export class CertificateController {
-  constructor(private readonly certificateService: CertificateService) {}
+  constructor(
+    private readonly certificateService: CertificateService,
+    private cloudinary: CloudinaryService,
+  ) {}
 
   @Get()
   async findAll(): Promise<any> {
@@ -37,31 +33,25 @@ export class CertificateController {
   }
 
   @Post()
-  @UseInterceptors(
-    FileInterceptor('thumbnail', {
-      storage: diskStorage({
-        destination: 'public/img/certificate',
-        filename: (req, file, cb) => {
-          const ext = path.extname(file.originalname);
-          const fileName = `${Math.round(
-            Math.random() * 1e9,
-          )}_${Date.now()}${ext}`;
-          cb(null, fileName);
-        },
-      }),
-      fileFilter: imageFileFilter,
-      limits: {
-        fileSize: 1024 * 1024 * 2,
-      },
-    }),
-  )
+  @UseInterceptors(FileInterceptor('thumbnail'))
   async create(
     @Body(new ValidationPipe({ transform: true })) data: CertificateDto,
     @UploadedFile() file: Express.Multer.File,
   ) {
     try {
       if (file) {
-        data.thumbnail = file.path.replace(/\\/g, '/');
+        await this.cloudinary
+          .uploadImage(file, 'certificate')
+          .then((result) => {
+            const imageUrl = result.secure_url;
+            if (file) {
+              data.thumbnail = imageUrl;
+            }
+          })
+          .catch((error) => {
+            console.error('Cloudinary upload error:', error);
+            throw new BadRequestException('Invalid file type.');
+          });
       }
       data.user_id = Number(data.user_id);
       const newCertificate: Certificate = await this.certificateService.create({
@@ -75,24 +65,7 @@ export class CertificateController {
   }
 
   @Put(':id')
-  @UseInterceptors(
-    FileInterceptor('thumbnail', {
-      storage: diskStorage({
-        destination: 'public/img/certificate',
-        filename: (req, file, cb) => {
-          const ext = path.extname(file.originalname);
-          const fileName = `${Math.round(
-            Math.random() * 1e9,
-          )}_${Date.now()}${ext}`;
-          cb(null, fileName);
-        },
-      }),
-      fileFilter: imageFileFilter,
-      limits: {
-        fileSize: 1024 * 1024 * 2,
-      },
-    }),
-  )
+  @UseInterceptors(FileInterceptor('thumbnail'))
   async update(
     @Param('id') id: number,
     @Body(new ValidationPipe({ transform: true })) updatedData: CertificateDto,
@@ -108,13 +81,27 @@ export class CertificateController {
 
       if (file) {
         try {
-          await fs.access(certificate.thumbnail);
-          await fs.unlink(certificate.thumbnail);
+          await this.cloudinary.deleteImage(
+            certificate.thumbnail,
+            'certificate',
+          );
         } catch (error) {
           console.error(`Error deleting file: ${certificate.thumbnail}`);
           console.error(error.message);
         }
-        updatedData.thumbnail = file.path.replace(/\\/g, '/');
+
+        await this.cloudinary
+          .uploadImage(file, 'certificate')
+          .then((result) => {
+            const imageUrl = result.secure_url;
+            if (file) {
+              updatedData.thumbnail = imageUrl;
+            }
+          })
+          .catch((error) => {
+            console.error('Cloudinary upload error:', error);
+            throw new BadRequestException('Invalid file type.');
+          });
       }
       const certificateEdited: Certificate =
         await this.certificateService.update(idCertificate, updatedData);

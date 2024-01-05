@@ -16,23 +16,16 @@ import { PortofolioService } from './portofolio.service';
 import { Portofolio } from './portofolio.entity';
 import { PortofolioDto } from './portofolio.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
 import * as fs from 'fs/promises';
-import * as path from 'path';
 import { PortofolioTagService } from 'src/portofolio_tag/portofolio_tag.service';
+import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 
-const imageFileFilter = (req, file, cb) => {
-  if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/)) {
-    const error = new BadRequestException('Only image files are allowed!');
-    return cb(error, false);
-  }
-  cb(null, true);
-};
 @Controller()
 export class PortofolioController {
   constructor(
     private readonly portofolioService: PortofolioService,
     private readonly portofolioTagService: PortofolioTagService,
+    private cloudinary: CloudinaryService,
   ) {}
 
   @Get()
@@ -45,32 +38,25 @@ export class PortofolioController {
   }
 
   @Post()
-  @UseInterceptors(
-    FileInterceptor('thumbnail', {
-      storage: diskStorage({
-        destination: 'public/img/portofolio',
-        filename: (req, file, cb) => {
-          const ext = path.extname(file.originalname);
-          const fileName = `${Math.round(
-            Math.random() * 1e9,
-          )}_${Date.now()}${ext}`;
-          cb(null, fileName);
-        },
-      }),
-      fileFilter: imageFileFilter,
-      limits: {
-        fileSize: 1024 * 1024 * 2,
-      },
-    }),
-  )
+  @UseInterceptors(FileInterceptor('thumbnail'))
   async create(
     @Body(new ValidationPipe({ transform: true })) data: PortofolioDto,
     @UploadedFile() file: Express.Multer.File,
   ) {
     try {
-      if (file) {
-        data.thumbnail = file.path.replace(/\\/g, '/');
-      }
+      await this.cloudinary
+        .uploadImage(file, 'thumbnail')
+        .then((result) => {
+          const imageUrl = result.secure_url;
+          if (file) {
+            data.thumbnail = imageUrl;
+          }
+        })
+        .catch((error) => {
+          console.error('Cloudinary upload error:', error);
+          throw new BadRequestException('Invalid file type.');
+        });
+
       const newPorto: Portofolio = await this.portofolioService.create({
         ...data,
       });
@@ -86,24 +72,7 @@ export class PortofolioController {
   }
 
   @Put(':id')
-  @UseInterceptors(
-    FileInterceptor('thumbnail', {
-      storage: diskStorage({
-        destination: 'public/img/portofolio',
-        filename: (req, file, cb) => {
-          const ext = path.extname(file.originalname);
-          const fileName = `${Math.round(
-            Math.random() * 1e9,
-          )}_${Date.now()}${ext}`;
-          cb(null, fileName);
-        },
-      }),
-      fileFilter: imageFileFilter,
-      limits: {
-        fileSize: 1024 * 1024 * 2,
-      },
-    }),
-  )
+  @UseInterceptors(FileInterceptor('thumbnail'))
   async update(
     @Param('id') id: number,
     @Body(new ValidationPipe({ transform: true })) updatedData: PortofolioDto,
@@ -117,13 +86,24 @@ export class PortofolioController {
 
       if (file) {
         try {
-          await fs.access(porto.thumbnail);
-          await fs.unlink(porto.thumbnail);
+          await this.cloudinary.deleteImage(porto.thumbnail, 'thumbnail');
         } catch (error) {
           console.error(`Error deleting file: ${porto.thumbnail}`);
           console.error(error.message);
         }
-        updatedData.thumbnail = file.path.replace(/\\/g, '/');
+
+        await this.cloudinary
+          .uploadImage(file, 'thumbnail')
+          .then((result) => {
+            const imageUrl = result.secure_url;
+            if (file) {
+              updatedData.thumbnail = imageUrl;
+            }
+          })
+          .catch((error) => {
+            console.error('Cloudinary upload error:', error);
+            throw new BadRequestException('Invalid file type.');
+          });
       }
 
       if (updatedData.portofolioTag) {

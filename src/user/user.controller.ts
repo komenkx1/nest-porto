@@ -14,20 +14,11 @@ import {
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
 import { UserDto } from './user.dto';
 import * as fs from 'fs/promises';
-import * as path from 'path';
 import { User } from './user.entity';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 
-const imageFileFilter = (req, file, cb) => {
-  if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/)) {
-    const error = new BadRequestException('Only image files are allowed!');
-    return cb(error, false);
-  }
-  cb(null, true);
-};
 @Controller()
 export class UserController {
   constructor(

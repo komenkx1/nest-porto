@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 import { TagService } from './tag.service';
 import { Tag } from './tag.entity';
-import { ApiResponse } from 'src/api-response';
+import { ApiResponse } from '../api-response';
 import { TagDto } from './tag.dto';
 
 @Controller()

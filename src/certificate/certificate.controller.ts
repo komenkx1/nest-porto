@@ -12,7 +12,7 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { CertificateService } from './certificate.service';
-import { ApiResponse } from 'src/api-response';
+import { ApiResponse } from '../api-response';
 import { FileInterceptor } from '@nestjs/platform-express';
 import * as fs from 'fs/promises';
 import { CertificateDto } from './certificate.dto';

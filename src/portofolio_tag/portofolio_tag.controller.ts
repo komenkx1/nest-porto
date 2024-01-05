@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 import { PortofolioTagService } from './portofolio_tag.service';
 import { PortofolioTag } from './portofolio_tag.entity';
-import { ApiResponse } from 'src/api-response';
+import { ApiResponse } from '../api-response';
 import { PortofolioTagDto } from './portofolio_tag.dto';
 
 @Controller()

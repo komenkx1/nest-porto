@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { AppRoutingModule } from './app.routing.module';
 import { DatabaseModule } from './database/database.module';
@@ -13,6 +13,7 @@ import { TagModule } from './tag/tag.module';
 import { PortofolioTagModule } from './portofolio_tag/portofolio_tag.module';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
 import { ClodinaryService } from './clodinary/clodinary.service';
+import { CorsMiddleware } from './cors.middleware';
 
 @Module({
   imports: [
@@ -34,4 +35,8 @@ import { ClodinaryService } from './clodinary/clodinary.service';
   controllers: [],
   providers: [ClodinaryService],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(CorsMiddleware).forRoutes('*');
+  }
+}

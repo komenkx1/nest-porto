@@ -55,6 +55,13 @@ export class PortofolioTagService {
     return newData;
   }
 
+  removeByPortofolioId(portofolioId: number) {
+    const idPorto = Number(portofolioId);
+    return this.databaseService.portofolio_tag.deleteMany({
+      where: { portofolio_id: idPorto },
+    });
+  }
+
   async remove(id: number): Promise<PortofolioTag> {
     const portofolioTagId: number = Number(id);
 

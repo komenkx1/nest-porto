@@ -107,12 +107,18 @@ export class PortofolioController {
             throw new BadRequestException('Invalid file type.');
           });
       }
+      updatedData.user_id = Number(updatedData.user_id);
+      updatedData.category_id = Number(updatedData.category_id);
+      updatedData.portofolioTag = JSON.parse(updatedData.portofolioTag);
 
-      if (updatedData.portofolioTag) {
-        updatedData.portofolioTag.forEach((tag) => {
-          this.portofolioTagService.update(tag.id, tag);
+      this.portofolioTagService.removeByPortofolioId(id).then(() => {
+        updatedData.portofolioTag.map((tag) => {
+          tag.portofolio_id = Number(id);
+          delete tag.id;
+          delete tag.tag;
         });
-      }
+        this.portofolioTagService.bulkCreate(updatedData.portofolioTag);
+      });
       const userEdited: Portofolio = await this.portofolioService.update(
         id,
         updatedData,

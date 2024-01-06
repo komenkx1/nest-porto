@@ -15,6 +15,11 @@ export class CorsMiddleware implements NestMiddleware {
       'Access-Control-Allow-Methods',
       'GET, POST, PUT, PATCH, DELETE, OPTIONS',
     );
+    //if OPTIONS method, send OK status
+    if (req.method === 'OPTIONS') {
+      res.status(200).send('OK');
+      return;
+    }
     next();
   }
 }

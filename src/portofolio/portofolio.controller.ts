@@ -56,7 +56,9 @@ export class PortofolioController {
           console.error('Cloudinary upload error:', error);
           throw new BadRequestException('Invalid file type.');
         });
-
+      data.user_id = Number(data.user_id);
+      data.category_id = Number(data.category_id);
+      data.portofolioTag = JSON.parse(data.portofolioTag);
       const newPorto: Portofolio = await this.portofolioService.create({
         ...data,
       });

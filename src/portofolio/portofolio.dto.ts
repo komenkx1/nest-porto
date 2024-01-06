@@ -1,10 +1,4 @@
-import {
-  IsArray,
-  IsNotEmpty,
-  IsNumber,
-  IsOptional,
-  IsString,
-} from 'class-validator';
+import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class PortofolioDto {
   @IsOptional()
@@ -12,11 +6,9 @@ export class PortofolioDto {
   id: number;
 
   @IsNotEmpty()
-  @IsNumber()
   user_id: number;
 
   @IsNotEmpty()
-  @IsNumber()
   category_id: number;
 
   @IsNotEmpty()
@@ -27,10 +19,9 @@ export class PortofolioDto {
   @IsString()
   description: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   thumbnail: string;
 
   @IsOptional()
-  @IsArray()
   portofolioTag: any;
 }

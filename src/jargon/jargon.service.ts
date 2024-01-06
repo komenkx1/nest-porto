@@ -25,6 +25,19 @@ export class JargonService {
     return result;
   }
 
+  findByUserId(userId: number): Promise<Jargon> {
+    const idUser = Number(userId);
+    return this.databaseService.jargon.findUnique({
+      where: { user_id: idUser },
+    });
+  }
+  removeByUserId(userId: number) {
+    const idUser = Number(userId);
+    return this.databaseService.jargon.delete({
+      where: { user_id: idUser },
+    });
+  }
+
   async update(id: number, data: Prisma.jargonUpdateInput): Promise<Jargon> {
     const jargonId: number = Number(id);
     const result: Jargon = await this.databaseService.jargon.update({

@@ -17,12 +17,17 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { UserDto } from './user.dto';
 import { User } from './user.entity';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
+import { JargonService } from 'src/jargon/jargon.service';
+import { JargonDto } from 'src/jargon/jargon.dto';
+import { Jargon } from 'src/jargon/jargon.enitity';
+import { ApiResponse } from 'src/api-response';
 
 @Controller()
 export class UserController {
   constructor(
     private readonly userService: UserService,
     private cloudinary: CloudinaryService,
+    private readonly jargonService: JargonService,
   ) {}
 
   //crud
@@ -129,7 +134,7 @@ export class UserController {
           console.error(error.message);
         }
       }
-
+      await this.jargonService.removeByUserId(id);
       await this.userService.delete(id);
       delete user.password;
       return { message: 'User deleted successfully', data: user, code: 200 };
@@ -156,5 +161,19 @@ export class UserController {
     await this.userService.update(user.id, updatedData);
 
     return { message: 'User updated successfully' };
+  }
+
+  @Post('jargon/:id')
+  async setJargon(@Param('id') id: number, @Body() updatedData: JargonDto) {
+    const userId = Number(id);
+    const jargon: Jargon = await this.jargonService.findByUserId(userId);
+
+    if (jargon) {
+      await this.jargonService.update(jargon.id, updatedData);
+    } else {
+      await this.jargonService.create({ ...updatedData });
+    }
+
+    return ApiResponse.success(updatedData);
   }
 }

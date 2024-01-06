@@ -15,7 +15,6 @@ import {
 import { UserService } from './user.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UserDto } from './user.dto';
-import * as fs from 'fs/promises';
 import { User } from './user.entity';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 
@@ -124,8 +123,7 @@ export class UserController {
       }
       if (user.profileImage) {
         try {
-          await fs.access(user.profileImage);
-          await fs.unlink(user.profileImage);
+          await this.cloudinary.deleteImage(user.profileImage, 'profile_image');
         } catch (error) {
           console.error(`Error deleting file: ${user.profileImage}`);
           console.error(error.message);

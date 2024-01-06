@@ -14,7 +14,6 @@ import {
 import { CertificateService } from './certificate.service';
 import { ApiResponse } from '../api-response';
 import { FileInterceptor } from '@nestjs/platform-express';
-import * as fs from 'fs/promises';
 import { CertificateDto } from './certificate.dto';
 import { Certificate } from './certificate.entity';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
@@ -120,7 +119,18 @@ export class CertificateController {
       if (!certificate) {
         throw new BadRequestException('Certificate not found');
       }
-      certificate.thumbnail ? await fs.unlink(certificate.thumbnail) : null;
+      if (certificate.thumbnail) {
+        try {
+          await this.cloudinary.deleteImage(
+            certificate.thumbnail,
+            'certificate',
+          );
+        } catch (error) {
+          console.error(`Error deleting file: ${certificate.thumbnail}`);
+          console.error(error.message);
+        }
+      }
+
       await this.certificateService.delete(certificateId);
       return ApiResponse.success(certificate);
     } catch (error) {

@@ -16,7 +16,6 @@ import { PortofolioService } from './portofolio.service';
 import { Portofolio } from './portofolio.entity';
 import { PortofolioDto } from './portofolio.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
-import * as fs from 'fs/promises';
 import { PortofolioTagService } from 'src/portofolio_tag/portofolio_tag.service';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 
@@ -44,18 +43,20 @@ export class PortofolioController {
     @UploadedFile() file: Express.Multer.File,
   ) {
     try {
-      await this.cloudinary
-        .uploadImage(file, 'thumbnail')
-        .then((result) => {
-          const imageUrl = result.secure_url;
-          if (file) {
-            data.thumbnail = imageUrl;
-          }
-        })
-        .catch((error) => {
-          console.error('Cloudinary upload error:', error);
-          throw new BadRequestException('Invalid file type.');
-        });
+      if (file) {
+        await this.cloudinary
+          .uploadImage(file, 'thumbnail')
+          .then((result) => {
+            const imageUrl = result.secure_url;
+            if (file) {
+              data.thumbnail = imageUrl;
+            }
+          })
+          .catch((error) => {
+            console.error('Cloudinary upload error:', error);
+            throw new BadRequestException('Invalid file type.');
+          });
+      }
       data.user_id = Number(data.user_id);
       data.category_id = Number(data.category_id);
       data.portofolioTag = JSON.parse(data.portofolioTag);
@@ -143,14 +144,13 @@ export class PortofolioController {
 
       if (porto.thumbnail) {
         try {
-          await fs.access(porto.thumbnail);
-          await fs.unlink(porto.thumbnail);
+          await this.cloudinary.deleteImage(porto.thumbnail, 'thumbnail');
         } catch (error) {
           console.error(`Error deleting file: ${porto.thumbnail}`);
           console.error(error.message);
         }
       }
-
+      await this.portofolioTagService.removeByPortofolioId(id);
       await this.portofolioService.delete(id);
       return {
         message: 'Portofolio deleted successfully',

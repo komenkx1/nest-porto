@@ -44,6 +44,7 @@ export class CertificateController {
           .then((result) => {
             const imageUrl = result.secure_url;
             if (file) {
+              console.log(imageUrl);
               data.thumbnail = imageUrl;
             }
           })

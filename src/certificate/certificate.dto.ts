@@ -5,7 +5,6 @@ export class CertificateDto {
   @IsNumber()
   id: number;
   @IsNotEmpty()
-  @IsNumber()
   user_id: number;
   @IsNotEmpty()
   @IsString()

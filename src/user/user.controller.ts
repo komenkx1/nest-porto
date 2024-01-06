@@ -22,6 +22,7 @@ import { JargonDto } from 'src/jargon/jargon.dto';
 import { Jargon } from 'src/jargon/jargon.enitity';
 import { ApiResponse } from 'src/api-response';
 import * as bcrypt from 'bcrypt';
+import { Public } from 'src/public.decorator';
 
 @Controller()
 export class UserController {
@@ -33,6 +34,7 @@ export class UserController {
 
   //crud
   @Get()
+  @Public()
   async findAll(
     @Query() query: { name?: string; is_active?: boolean; title?: string },
   ) {

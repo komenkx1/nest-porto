@@ -14,6 +14,8 @@ import { PortofolioTagModule } from './portofolio_tag/portofolio_tag.module';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
 import { ClodinaryService } from './clodinary/clodinary.service';
 import { CorsMiddleware } from './cors.middleware';
+import { AuthModule } from './auth/auth.module';
+import { AuthGuard } from './auth/auth.guard';
 
 @Module({
   imports: [
@@ -31,9 +33,16 @@ import { CorsMiddleware } from './cors.middleware';
     TagModule,
     PortofolioTagModule,
     CloudinaryModule,
+    AuthModule,
   ],
   controllers: [],
-  providers: [ClodinaryService],
+  providers: [
+    ClodinaryService,
+    {
+      provide: 'APP_GUARD',
+      useClass: AuthGuard,
+    },
+  ],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

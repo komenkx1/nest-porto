@@ -11,12 +11,14 @@ import { CategoryService } from './category.service';
 import { Category } from './category.entity';
 import { ApiResponse } from '../api-response';
 import { CategoryDto } from './category.dto';
+import { Public } from 'src/public.decorator';
 
 @Controller()
 export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
 
   @Get()
+  @Public()
   async findAll() {
     const data: Category[] = await this.categoryService.findAll();
     return ApiResponse.success(data);

@@ -11,12 +11,14 @@ import { PortofolioTagService } from './portofolio_tag.service';
 import { PortofolioTag } from './portofolio_tag.entity';
 import { ApiResponse } from '../api-response';
 import { PortofolioTagDto } from './portofolio_tag.dto';
+import { Public } from 'src/public.decorator';
 
 @Controller()
 export class PortofolioTagController {
   constructor(private readonly portofolioTagService: PortofolioTagService) {}
 
   @Get()
+  @Public()
   async findAll() {
     const data: PortofolioTag[] = await this.portofolioTagService.findAll();
     return ApiResponse.success(data);

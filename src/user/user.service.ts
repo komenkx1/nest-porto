@@ -7,6 +7,12 @@ import { Prisma } from '@prisma/client';
 export class UserService {
   constructor(private readonly databaseService: DatabaseService) {}
 
+  findByUsername(body: Prisma.userWhereUniqueInput): Promise<User> {
+    return this.databaseService.user.findUnique({
+      where: body,
+    });
+  }
+
   async findAll(filterParams?: {
     name?: string;
     is_active?: boolean;

@@ -11,12 +11,14 @@ import { TagService } from './tag.service';
 import { Tag } from './tag.entity';
 import { ApiResponse } from '../api-response';
 import { TagDto } from './tag.dto';
+import { Public } from 'src/public.decorator';
 
 @Controller()
 export class TagController {
   constructor(private tagService: TagService) {}
 
   @Get()
+  @Public()
   async findAll() {
     const data: Tag[] = await this.tagService.findAll();
     return ApiResponse.success(data);

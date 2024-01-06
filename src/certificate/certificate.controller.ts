@@ -17,6 +17,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { CertificateDto } from './certificate.dto';
 import { Certificate } from './certificate.entity';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
+import { Public } from 'src/public.decorator';
 
 @Controller()
 export class CertificateController {
@@ -26,6 +27,7 @@ export class CertificateController {
   ) {}
 
   @Get()
+  @Public()
   async findAll(): Promise<any> {
     const data = await this.certificateService.findAll();
     return ApiResponse.success(data);

@@ -18,6 +18,7 @@ import { PortofolioDto } from './portofolio.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { PortofolioTagService } from 'src/portofolio_tag/portofolio_tag.service';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
+import { Public } from 'src/public.decorator';
 
 @Controller()
 export class PortofolioController {
@@ -28,6 +29,7 @@ export class PortofolioController {
   ) {}
 
   @Get()
+  @Public()
   async findAll(
     @Query('page') page: number = 1,
     @Query('pageSize') pageSize: number = 3,

@@ -13,6 +13,7 @@ datasource db {
 model user {
   id           Int           @id @default(autoincrement())
   name         String
+  username     String        @unique
   is_active    Boolean       @default(false)
   password     String
   description  String?       @db.Text
@@ -66,8 +67,8 @@ model portofolio {
   createdAt     DateTime         @default(now())
   updatedAt     DateTime         @updatedAt
   deletedAt     DateTime?
-  user          user?             @relation(fields: [user_id], references: [id])
-  category      category?         @relation(fields: [category_id], references: [id])
+  user          user?            @relation(fields: [user_id], references: [id])
+  category      category?        @relation(fields: [category_id], references: [id])
   portofolioTag portofolio_tag[]
 }
 
@@ -79,7 +80,7 @@ model portofolio_tag {
   updatedAt     DateTime   @updatedAt
   deletedAt     DateTime?
   portofolio    portofolio @relation(fields: [portofolio_id], references: [id])
-  tag           tag?        @relation(fields: [tag_id], references: [id])
+  tag           tag?       @relation(fields: [tag_id], references: [id])
 }
 
 model certificate {
@@ -91,5 +92,5 @@ model certificate {
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
   deletedAt   DateTime?
-  user        user?      @relation(fields: [user_id], references: [id])
+  user        user?     @relation(fields: [user_id], references: [id])
 }

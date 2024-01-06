@@ -13,12 +13,14 @@ import { JargonService } from './jargon.service';
 import { Jargon } from './jargon.enitity';
 import { ApiResponse } from '../api-response';
 import { JargonDto } from './jargon.dto';
+import { Public } from 'src/public.decorator';
 
 @Controller()
 export class JargonController {
   constructor(private readonly jargonService: JargonService) {}
 
   @Get()
+  @Public()
   async findAll() {
     const dataJargon: Jargon[] = await this.jargonService.findAll();
     return ApiResponse.success(dataJargon);

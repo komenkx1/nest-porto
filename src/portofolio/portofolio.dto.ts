@@ -28,7 +28,6 @@ export class PortofolioDto {
   description: string;
 
   @IsNotEmpty()
-  @IsString()
   thumbnail: string;
 
   @IsOptional()

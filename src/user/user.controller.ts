@@ -21,6 +21,7 @@ import { JargonService } from 'src/jargon/jargon.service';
 import { JargonDto } from 'src/jargon/jargon.dto';
 import { Jargon } from 'src/jargon/jargon.enitity';
 import { ApiResponse } from 'src/api-response';
+import * as bcrypt from 'bcrypt';
 
 @Controller()
 export class UserController {
@@ -46,10 +47,10 @@ export class UserController {
   @Post()
   @UseInterceptors(FileInterceptor('profileImage'))
   async create(
-    @Body() data: UserDto,
+    @Body(new ValidationPipe({ transform: true })) data: UserDto,
     @UploadedFile() file: Express.Multer.File,
   ) {
-    try {
+    if (file) {
       await this.cloudinary
         .uploadImage(file, 'profile_image')
         .then((result) => {
@@ -62,11 +63,19 @@ export class UserController {
           console.error('Cloudinary upload error:', error);
           throw new BadRequestException('Invalid file type.');
         });
-
+    }
+    try {
+      if (data.password) {
+        data.password = bcrypt.hashSync(data.password, 10);
+      }
       const newUser: User = await this.userService.create({ ...data });
       //delete user password
       delete newUser.password;
-      return { message: 'User created successfully', data: newUser, code: 200 };
+      return {
+        message: 'User created successfully',
+        data: newUser,
+        code: 200,
+      };
     } catch (error) {
       throw new BadRequestException('Validation failed', error.message);
     }
@@ -105,6 +114,13 @@ export class UserController {
             console.error('Cloudinary upload error:', error);
             throw new BadRequestException('Invalid file type.');
           });
+      } else {
+        delete updatedData.profileImage;
+      }
+      if (updatedData.password !== '') {
+        updatedData.password = bcrypt.hashSync(updatedData.password, 10);
+      } else {
+        delete updatedData.password;
       }
       const userEdited: User = await this.userService.update(id, updatedData);
       delete userEdited.password;
@@ -134,7 +150,7 @@ export class UserController {
           console.error(error.message);
         }
       }
-      await this.jargonService.removeByUserId(id);
+      user.jargon ? await this.jargonService.removeByUserId(id) : null;
       await this.userService.delete(id);
       delete user.password;
       return { message: 'User deleted successfully', data: user, code: 200 };

@@ -102,6 +102,8 @@ export class CertificateController {
             console.error('Cloudinary upload error:', error);
             throw new BadRequestException('Invalid file type.');
           });
+      } else {
+        delete updatedData.thumbnail;
       }
       const certificateEdited: Certificate =
         await this.certificateService.update(idCertificate, updatedData);

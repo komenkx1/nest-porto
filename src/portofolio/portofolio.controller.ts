@@ -107,6 +107,8 @@ export class PortofolioController {
             console.error('Cloudinary upload error:', error);
             throw new BadRequestException('Invalid file type.');
           });
+      } else {
+        delete updatedData.thumbnail;
       }
       updatedData.user_id = Number(updatedData.user_id);
       updatedData.category_id = Number(updatedData.category_id);

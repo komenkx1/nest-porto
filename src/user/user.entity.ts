@@ -5,6 +5,7 @@ import { Portofolio } from 'src/portofolio/portofolio.entity';
 export class User {
   id: number;
   name: string;
+  username: string;
   is_active: boolean;
   password: string;
   description: string;

@@ -6,6 +6,9 @@ export const AUTH_ROUTER = [
   {
     path: 'auth',
     module: AuthModule,
-    children: [{ path: 'sign-in', method: 'post', action: 'signIn' }],
+    children: [
+      { path: 'sign-in', method: 'post', action: 'signIn' },
+      { path: 'current-user', method: 'get', action: 'getCurrentUser' },
+    ],
   },
 ];

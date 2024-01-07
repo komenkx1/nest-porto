@@ -1,9 +1,11 @@
 import {
   Body,
   Controller,
+  Get,
   HttpCode,
   HttpStatus,
   Post,
+  Req,
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
@@ -21,6 +23,23 @@ export class AuthController {
     private readonly jwtService: JwtService,
     private readonly userService: UserService,
   ) {}
+
+  // Menggunakan JwtAuthGuard untuk memeriksa token
+  @Get('current-user')
+  getCurrentUser(@Req() request) {
+    try {
+      // Dapatkan informasi pengguna dari token yang terdekripsi
+      const user = request.user;
+
+      if (!user) {
+        throw new UnauthorizedException('User not found');
+      }
+
+      return user;
+    } catch (error) {
+      throw new UnauthorizedException('Invalid token');
+    }
+  }
 
   @HttpCode(HttpStatus.OK)
   @Post('sign-in')

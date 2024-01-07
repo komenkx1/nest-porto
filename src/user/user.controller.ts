@@ -22,7 +22,7 @@ import { JargonDto } from 'src/jargon/jargon.dto';
 import { Jargon } from 'src/jargon/jargon.enitity';
 import { ApiResponse } from 'src/api-response';
 import * as bcrypt from 'bcrypt';
-import { Public } from 'src/public.decorator';
+import { Public } from '../public.decorator';
 
 @Controller()
 export class UserController {

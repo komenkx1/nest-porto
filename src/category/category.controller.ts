@@ -11,7 +11,7 @@ import { CategoryService } from './category.service';
 import { Category } from './category.entity';
 import { ApiResponse } from '../api-response';
 import { CategoryDto } from './category.dto';
-import { Public } from 'src/public.decorator';
+import { Public } from '../public.decorator';
 
 @Controller()
 export class CategoryController {

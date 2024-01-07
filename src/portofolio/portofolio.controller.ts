@@ -18,7 +18,7 @@ import { PortofolioDto } from './portofolio.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { PortofolioTagService } from 'src/portofolio_tag/portofolio_tag.service';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
-import { Public } from 'src/public.decorator';
+import { Public } from '../public.decorator';
 
 @Controller()
 export class PortofolioController {

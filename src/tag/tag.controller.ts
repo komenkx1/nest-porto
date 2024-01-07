@@ -11,7 +11,7 @@ import { TagService } from './tag.service';
 import { Tag } from './tag.entity';
 import { ApiResponse } from '../api-response';
 import { TagDto } from './tag.dto';
-import { Public } from 'src/public.decorator';
+import { Public } from '../public.decorator';
 
 @Controller()
 export class TagController {

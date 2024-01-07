@@ -13,7 +13,7 @@ import { JargonService } from './jargon.service';
 import { Jargon } from './jargon.enitity';
 import { ApiResponse } from '../api-response';
 import { JargonDto } from './jargon.dto';
-import { Public } from 'src/public.decorator';
+import { Public } from '../public.decorator';
 
 @Controller()
 export class JargonController {

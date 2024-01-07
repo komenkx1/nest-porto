@@ -11,7 +11,7 @@ import { PortofolioTagService } from './portofolio_tag.service';
 import { PortofolioTag } from './portofolio_tag.entity';
 import { ApiResponse } from '../api-response';
 import { PortofolioTagDto } from './portofolio_tag.dto';
-import { Public } from 'src/public.decorator';
+import { Public } from '../public.decorator';
 
 @Controller()
 export class PortofolioTagController {

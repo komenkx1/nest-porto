@@ -15,7 +15,7 @@ import { jwtConstants } from './constants';
 import * as bcrypt from 'bcrypt';
 import { UserService } from 'src/user/user.service';
 import { SignInDto } from './auth.dto';
-import { Public } from 'src/public.decorator';
+import { Public } from '../public.decorator';
 
 @Controller()
 export class AuthController {
